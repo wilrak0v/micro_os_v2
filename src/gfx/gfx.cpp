@@ -40,26 +40,28 @@ void Renderer::render() {
     }
 
     // Render the rects
+    lgfx::LGFX_Sprite sprite(lcd);
     for (const auto& rect : dirtyRects) {
-        lcd->setClipRect(rect.x, rect.y, rect.w, rect.h);
-
-        lcd->startWrite();
+        if (!sprite.createSprite(rect.w, rect.h)) continue;
 
         for (const auto& cmd: commands) {
             if (rect.intersects(cmd.bounds)) {
+                int16_t rel_x = cmd.x1 - rect.x;
+                int16_t rel_y = cmd.y1 - rect.y;
                 switch(cmd.type) {
                     case RECTANGLE:
-                        lcd->fillRect(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.color);
+                        sprite.fillRect(rel_x, rel_y, cmd.x2, cmd.y2, cmd.color);
                         break;
                     case CIRCLE:
-                        lcd->fillCircle(cmd.x1, cmd.y1, cmd.x2, cmd.color);
+                        sprite.fillCircle(rel_x, rel_y, cmd.x2, cmd.color);
                         break;
                 }
             }
         }
 
-        lcd->endWrite();
+        sprite.pushSprite(rect.x, rect.y);
+
+        sprite.deleteSprite();
     }
-    lcd->setClipRect(0, 0, 320, 240);
     commands.clear();
 }
