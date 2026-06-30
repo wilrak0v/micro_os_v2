@@ -44,48 +44,45 @@ public:
 LGFX_Local lcd;
 Renderer renderer{&lcd};
 
-// --- 4. VARIABLES DE JEU (PHYSIQUE) ---
 int box_x = 50;
 int box_y = 50;
 int box_size = 20;
 
-int vel_x = 3; // Vitesse X (pixels par frame)
-int vel_y = 2; // Vitesse Y
+int vel_x = 3;
+int vel_y = 2;
 
 int old_box_x = 50;
 int old_box_y = 50;
 
 void setup() {
     lcd.init();
-    lcd.setRotation(1); // Mode Paysage (320x240)
+    lcd.setRotation(3);
     lcd.clear(TFT_BLACK);
 }
 
 void loop() {
-    // A. Sauvegarde de l'ancienne position pour pouvoir l'effacer
     old_box_x = box_x;
     old_box_y = box_y;
 
-    // B. Mise à jour de la physique (Déplacement)
     box_x += vel_x;
     box_y += vel_y;
 
-    // C. Gestion des rebonds sur les bordures de l'écran (320x240)
     if (box_x <= 0 || box_x + box_size >= 320) {
-        vel_x = -vel_x; // Inverse la vitesse X
+        vel_x = -vel_x;
     }
     if (box_y <= 0 || box_y + box_size >= 240) {
-        vel_y = -vel_y; // Inverse la vitesse Y
+        vel_y = -vel_y;
     }
 
-    // D. Enregistrement des intentions de dessin
-    // 1. On demande à effacer l'ancien carré (génère le dirty rect N)
     renderer.fillRect(old_box_x, old_box_y, box_size, box_size, TFT_BLACK);
-
-    // 2. On demande à dessiner le nouveau carré (génère le dirty rect N+1)
     renderer.fillRect(box_x, box_y, box_size, box_size, TFT_GREEN);
 
-    // E. Rendu final optimisé
+    renderer.drawLine(200, 200, 260, 220, TFT_YELLOW);
+
+    renderer.drawText("micro_os", 50, 10, 3, TFT_CYAN);
+
+    renderer.fillRect(160, 120, 20, 20, TFT_RED);
+
     renderer.render();
 
     delay(16); // ~60 FPS

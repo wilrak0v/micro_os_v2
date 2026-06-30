@@ -50,12 +50,15 @@ class Renderer {
 private:
     LGFX_Device *lcd;
     std::vector<GfxCommand> commands;
+    std::vector<Rect> dirtyRects;
 public:
     Renderer(LGFX_Device *lcd) : lcd{lcd} {}
 
     void fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
     
     void fillCircle(uint16_t cx, uint16_t cy, uint16_t r, uint16_t color);
+
+    void drawLine(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy, uint16_t color);
 
     void drawText(const char *text, uint16_t x, uint16_t y, uint16_t font_size, uint16_t color);
 
